@@ -234,6 +234,25 @@ class WebDriverBase {
         }
         return null;
     }
+    
+    /**
+     * Waits until the requested element is present on the page
+     * @param string $locatorStrategy
+     * @param string $value
+     * @return WebElement found element
+     */
+    public function waitForElement($locatorStrategy, $value) {
+		$element = null;
+
+		do {
+			try {
+				$element = $this->findElementBy($locatorStrategy, $value);
+			} catch (NoSuchElementException $e) {
+				//nothing to do, we'll try later (in next loop);
+			}
+		} while(!is_a($element, 'WebElement'));
+		return $element;
+	}
 
 }
 
