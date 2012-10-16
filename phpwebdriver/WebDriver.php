@@ -183,7 +183,24 @@ class WebDriver extends WebDriverBase {
         $response = curl_exec($session);
         return $this->extractValueFromJsonResponse($response);
     }
+    
+    /**
+    * Get the window handle of the current browser window
+    */
+    public function getWindowHandle() {
+        $request = $this->requestURL . "/window_handle";
+        $response = $this->execute_rest_request_GET($request);
+        return $this->extractValueFromJsonResponse($response);
+    }
 
+    /**
+     * Get the window handles of all (open) browser windows
+    */
+    public function getWindowHandles() {
+        $request = $this->requestURL . "/window_handles";
+        $response = $this->execute_rest_request_GET($request);
+        return $this->extractValueFromJsonResponse($response);
+    }
 
     /**
     Change focus to another window. The window to change focus to may be specified 
