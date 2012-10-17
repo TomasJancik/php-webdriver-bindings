@@ -16,10 +16,10 @@
   limitations under the License.
  */
 
-require_once 'WebDriverBase.php';
-require_once 'WebElement.php';
-require_once 'WebDriverException.php';
-require_once 'LocatorStrategy.php';
+require_once __DIR__ . '/WebDriverBase.php';
+require_once __DIR__ . '/WebElement.php';
+require_once __DIR__ . '/WebDriverException.php';
+require_once __DIR__ . '/LocatorStrategy.php';
 
 class WebDriver extends WebDriverBase {
 
@@ -186,6 +186,7 @@ class WebDriver extends WebDriverBase {
     
     /**
     * Get the window handle of the current browser window
+    * Code copied from http://code.google.com/p/php-webdriver-bindings/issues/detail?id=16
     */
     public function getWindowHandle() {
         $request = $this->requestURL . "/window_handle";
@@ -194,7 +195,8 @@ class WebDriver extends WebDriverBase {
     }
 
     /**
-     * Get the window handles of all (open) browser windows
+    * Get the window handles of all (open) browser windows
+    * Code copied from http://code.google.com/p/php-webdriver-bindings/issues/detail?id=16
     */
     public function getWindowHandles() {
         $request = $this->requestURL . "/window_handles";
@@ -414,6 +416,46 @@ class WebDriver extends WebDriverBase {
         $success = file_put_contents($png_filename, $data);
     }
 
+	/**
+     * Waits until the requested element is present on the page
+     * @param string $locatorStrategy
+     * @param string $value
+     * @return WebElement found element
+     * @author Tomas Jancik <t.jancik@gmail.com>
+     */
+    public function waitForElement($locatorStrategy, $value) {
+		$element = null;
+
+		do {
+			try {
+				$element = $this->findElementBy($locatorStrategy, $value);
+			} catch (NoSuchElementException $e) {
+				//nothing to do, we'll try later (in next loop);
+			}
+		} while(!is_a($element, 'WebElement') && !usleep(10000));
+		return $element;
+	}
+	
+	/**
+	* Waits until new window is opened
+	* @param bool $switch (wheter to switch to the new window or not)
+	* @return Webdriver - provides fluent interfase
+	*/
+	public function waitForNewWindow($switch = true) {
+		$windows = $this->getWindowHandles();
+		$windowsCount = count($windows); unset($windows);
+		
+		do {
+			$currentWindows = $this->getWindowHandles();
+			$currentWindowsCount = count($currentWindows);
+		} while($windowsCount == $currentWindowsCount && !usleep(10000));
+		
+		if($switch) {
+			$this->selectWindow($currentWindows[$currentWindowsCount - 1]);
+		}
+		
+		return $this;
+	}
 }
 
 ?>
