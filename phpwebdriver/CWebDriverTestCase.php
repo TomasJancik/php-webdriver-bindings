@@ -1,5 +1,4 @@
 <?php
-
 /*
   Copyright 2011 3e software house & interactive agency
 
@@ -15,7 +14,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  */
-
 /**
  *  Base class for functional tests using webdriver.
  *  It provides interface like classic selenium test class.
@@ -43,7 +41,7 @@ class CWebDriverTestCase extends PHPUnit_Framework_TestCase {
     protected function tearDown() {
         $this->webdriver->close();
     }
-    
+
     public function refresh(){
         $this->webdriver->refresh();
     }
@@ -55,7 +53,7 @@ class CWebDriverTestCase extends PHPUnit_Framework_TestCase {
     public function forward(){
         $this->webdriver->forward();
     }
-    
+
     public function focusFrame($frameId){
         $this->webdriver->focusFrame($frameId);
     }
@@ -173,7 +171,6 @@ class CWebDriverTestCase extends PHPUnit_Framework_TestCase {
             $this->fail( "Element has not appeared after " . $this->max_waiting_time . " seconds." );
         return $element;
     }
-
 }
 
 ?>

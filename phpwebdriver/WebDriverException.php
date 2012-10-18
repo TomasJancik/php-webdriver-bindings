@@ -1,7 +1,6 @@
 <?php
-
 /**
- * WebDriverException 
+ * WebDriverException
  */
 class WebDriverException extends Exception {
 

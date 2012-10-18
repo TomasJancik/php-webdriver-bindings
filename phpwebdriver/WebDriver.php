@@ -1,5 +1,4 @@
 <?php
-
 /*
   Copyright 2011 3e software house & interactive agency
 
@@ -15,7 +14,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  */
-
 require_once __DIR__ . '/WebDriverBase.php';
 require_once __DIR__ . '/WebElement.php';
 require_once __DIR__ . '/WebDriverException.php';
@@ -29,14 +27,14 @@ class WebDriver extends WebDriverBase {
 
     /**
      * Connects to Selenium server.
-     * @param $browserName The name of the browser being used; should be one of {chrome|firefox|htmlunit|internet explorer|iphone}. 
-     * @param $version 	The browser version, or the empty string if unknown. 
+     * @param $browserName The name of the browser being used; should be one of {chrome|firefox|htmlunit|internet explorer|iphone}.
+     * @param $version 	The browser version, or the empty string if unknown.
      * @param $caps  array with capabilities see: http://code.google.com/p/selenium/wiki/JsonWireProtocol#/session
     */
     public function connect($browserName="firefox", $version="", $caps=array()) {
         $request = $this->requestURL . "/session";
         $session = $this->curlInit($request);
-    $allCaps = 	
+    $allCaps =
         array_merge(
               array(
                   'javascriptEnabled' => true,
@@ -67,7 +65,7 @@ class WebDriver extends WebDriverBase {
         $response = curl_exec($session);
         $this->curlClose();
     }
-    
+
      /**
      * Refresh the current page.
      */
@@ -78,7 +76,7 @@ class WebDriver extends WebDriverBase {
         $this->preparePOST($session, null);
         curl_exec($session);
     }
-    
+
      /**
      * Navigate forwards in the browser history, if possible.
      */
@@ -100,7 +98,7 @@ class WebDriver extends WebDriverBase {
         $this->preparePOST($session, null);
         curl_exec($session);
     }
-	
+
 	/**
      * Get the element on the page that currently has focus.
      * @return JSON object WebElement.
@@ -109,7 +107,7 @@ class WebDriver extends WebDriverBase {
         $response = $this->execute_rest_request_GET($this->requestURL . "/element/active");
         return $this->extractValueFromJsonResponse($response);
     }
-    
+
      /**
      * Change focus to another frame on the page. If the frame ID is null, the server should switch to the page's default content.
      */
@@ -120,7 +118,6 @@ class WebDriver extends WebDriverBase {
         $args = array('id' => $frameId);
         $this->preparePOST($session, json_encode($args));
         curl_exec($session);
-		
     }
 
     /**
@@ -145,7 +142,7 @@ class WebDriver extends WebDriverBase {
     }
 
     /**
-     * Get the current page title. 
+     * Get the current page title.
      * @return string current page title
      */
     public function getTitle() {
@@ -155,7 +152,7 @@ class WebDriver extends WebDriverBase {
 
     /**
      * Get the current page source.
-     * @return string page source 
+     * @return string page source
      */
     public function getPageSource() {
         $request = $this->requestURL . "/source";
@@ -183,7 +180,7 @@ class WebDriver extends WebDriverBase {
         $response = curl_exec($session);
         return $this->extractValueFromJsonResponse($response);
     }
-    
+
     /**
     * Get the window handle of the current browser window
     * Code copied from http://code.google.com/p/php-webdriver-bindings/issues/detail?id=16
@@ -205,7 +202,7 @@ class WebDriver extends WebDriverBase {
     }
 
     /**
-    Change focus to another window. The window to change focus to may be specified 
+    Change focus to another window. The window to change focus to may be specified
     by its server assigned window handle, or by the value of its name attribute.
     */
     public function selectWindow($windowName) {
@@ -239,7 +236,7 @@ class WebDriver extends WebDriverBase {
     }
 
     /**
-    * Set a cookie. 	
+    * Set a cookie.
     */
     public function setCookie($name, $value, $cookie_path='/', $domain='', $secure=false, $expiry='') {
         $request = $this->requestURL . "/cookie";
@@ -255,7 +252,6 @@ class WebDriver extends WebDriverBase {
         return $this->extractValueFromJsonResponse($response);
     }
 
-
     /**
     Delete the cookie with the given name. This command should be a no-op if there is no such cookie visible to the current page.
     */
@@ -268,7 +264,7 @@ class WebDriver extends WebDriverBase {
     }
 
     /**
-    	Delete all cookies visible to the current page. 
+    	Delete all cookies visible to the current page.
     */
     public function deleteAllCookies() {
         $request = $this->requestURL . "/cookie";
@@ -277,7 +273,6 @@ class WebDriver extends WebDriverBase {
         $response = curl_exec($session);
         $this->curlClose();
     }
-
 
     /**
      * Gets the text of the currently displayed JavaScript alert(), confirm(), or prompt() dialog.
@@ -300,7 +295,7 @@ class WebDriver extends WebDriverBase {
         $response = curl_exec($session);
         return $this->extractValueFromJsonResponse($response);
     }
-    
+
      /**
      * Get the current browser orientation. The server should return a valid orientation value as defined in ScreenOrientation: LANDSCAPE|PORTRAIT.
      * @return string The current browser orientation corresponding to a value defined in ScreenOrientation: LANDSCAPE|PORTRAIT.
@@ -323,7 +318,7 @@ class WebDriver extends WebDriverBase {
     }
 
     /**
-     * Accepts the currently displayed alert dialog. Usually, this is equivalent to clicking on the 'OK' button in the dialog.     
+     * Accepts the currently displayed alert dialog. Usually, this is equivalent to clicking on the 'OK' button in the dialog.
     */
     public function acceptAlert() {
         $request = $this->requestURL . "/accept_alert";
@@ -334,7 +329,7 @@ class WebDriver extends WebDriverBase {
     }
 
     /**
-     *     Dismisses the currently displayed alert dialog. For confirm() and prompt() dialogs, 
+     *     Dismisses the currently displayed alert dialog. For confirm() and prompt() dialogs,
      *	this is equivalent to clicking the 'Cancel' button. For alert() dialogs, this is equivalent to clicking the 'OK' button.
     */
     public function dismissAlert() {
@@ -435,7 +430,7 @@ class WebDriver extends WebDriverBase {
 		} while(!is_a($element, 'WebElement') && !usleep(10000));
 		return $element;
 	}
-	
+
 	/**
 	* Waits until new window is opened
 	* @param bool $switch (wheter to switch to the new window or not)
@@ -444,16 +439,16 @@ class WebDriver extends WebDriverBase {
 	public function waitForNewWindow($switch = true) {
 		$windows = $this->getWindowHandles();
 		$windowsCount = count($windows); unset($windows);
-		
+
 		do {
 			$currentWindows = $this->getWindowHandles();
 			$currentWindowsCount = count($currentWindows);
 		} while($windowsCount == $currentWindowsCount && !usleep(10000));
-		
+
 		if($switch) {
 			$this->selectWindow($currentWindows[$currentWindowsCount - 1]);
 		}
-		
+
 		return $this;
 	}
 }
