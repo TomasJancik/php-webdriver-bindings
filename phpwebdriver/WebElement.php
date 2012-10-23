@@ -1,5 +1,4 @@
 <?php
-
 /*
   Copyright 2011 3e software house & interactive agency
 
@@ -28,6 +27,12 @@ class WebElement extends WebDriverBase {
         parent::__construct($root . "/element/" . $element->ELEMENT);
     }
 
+    /**
+     * Set value to element
+     * @param array $value
+     * @return \WebElement
+     * @throws Exception
+     */
     public function sendKeys($value) {
         if (!is_array($value)) {
             throw new Exception("$value must be an array");
@@ -38,26 +43,44 @@ class WebElement extends WebDriverBase {
         $postargs =json_encode($args);
         $this->preparePOST($session, $postargs);
         $response = trim(curl_exec($session));
+
+        return $this;
     }
 
+    /**
+     * Get value of the element
+     * @return type
+     */
     public function getValue() {
         $request = $this->requestURL . "/value";
         $response = $this->execute_rest_request_GET($request);
         return $this->extractValueFromJsonResponse($response);
     }
 
+    /**
+     * Clear element value
+     * @return \WebElement
+     */
     public function clear() {
         $request = $this->requestURL . "/clear";
         $session = $this->curlInit($request);
         $this->preparePOST($session, null);
         $response = trim(curl_exec($session));
+
+        return $this;
     }
 
+    /**
+     * Click on the element
+     * @return \WebElement
+     */
     public function click() {
         $request = $this->requestURL . "/click";
         $session = $this->curlInit($request);
         $this->preparePOST($session, null);
         $response = trim(curl_exec($session));
+
+        return $this;
     }
 
     public function submit() {
@@ -65,18 +88,32 @@ class WebElement extends WebDriverBase {
         $session = $this->curlInit($request);
         $this->preparePOST($session, "");
         $response = trim(curl_exec($session));
+
+        return $this;
     }
 
+    /**
+     * Get the of element
+     * @return \WebElement
+     */
     public function getText() {
         $request = $this->requestURL . "/text";
         $response = $this->execute_rest_request_GET($request);
         return $this->extractValueFromJsonResponse($response);
+
+        return $this;
     }
 
+    /**
+     * Get name of element
+     * @return \WebElement
+     */
     public function getName() {
         $request = $this->requestURL . "/name";
         $response = $this->execute_rest_request_GET($request);
         return $this->extractValueFromJsonResponse($response);
+
+        return $this;
     }
 
     /**
@@ -87,6 +124,8 @@ class WebElement extends WebDriverBase {
     	$response = $this->execute_rest_request_GET($request);
     	$attributeValue = $this->extractValueFromJsonResponse($response);
     	return ($attributeValue);
+
+        return $this;
     }
 
     /**
@@ -98,20 +137,21 @@ class WebElement extends WebDriverBase {
         $response = $this->execute_rest_request_GET($request);
         $isSelected = $this->extractValueFromJsonResponse($response);
         return ($isSelected == 'true');
+
+        return $this;
     }
 
     /**
      * Select an OPTION element, or an INPUT element of type checkbox or radiobutton.
-     *
      */
     public function setSelected() {
-    $this->click(); //setSelected is now deprecated
-    }
+        $this->click(); //setSelected is now deprecated
 
+        return $this;
+    }
 
     /**
      * find OPTION by text in combobox
-     *
      */
     public function findOptionElementByText($text) {
         $option = $this->findElementBy(LocatorStrategy::xpath, 'option[normalize-space(text())="'.$text.'"]');
@@ -120,13 +160,11 @@ class WebElement extends WebDriverBase {
 
     /**
      * find OPTION by value in combobox
-     *
      */
     public function findOptionElementByValue($val) {
         $option = $this->findElementBy(LocatorStrategy::xpath, 'option[@value="'.$val.'"]');
         return $option;
     }
-
 
     /**
      * Determine if an element is currently enabled
@@ -139,7 +177,6 @@ class WebElement extends WebDriverBase {
         return ($isSelected == 'true');
     }
 
-
      /**
      * Determine if an element is currently displayed.
      * @return boolean Whether the element is displayed.
@@ -150,7 +187,6 @@ class WebElement extends WebDriverBase {
         $isDisplayed = $this->extractValueFromJsonResponse($response);
         return ($isDisplayed == 'true');
     }
-
 
      /**
      * Determine an element's size in pixels. The size will be returned as a JSON object with width and height properties.
@@ -164,7 +200,6 @@ class WebElement extends WebDriverBase {
         return $sizeValues;
     }
 
-
      /**
      * Query the value of an element's computed CSS property. The CSS property to query should be specified using
      * the CSS property name, not the JavaScript property name (e.g. background-color instead of backgroundColor).
@@ -177,13 +212,11 @@ class WebElement extends WebDriverBase {
         return $propertyValue;
     }
 
-
      /**
      * Test if two element IDs refer to the same DOM element.
      * @return boolean Whether the two IDs refer to the same element.
      */
     public function isOtherId($otherId) {
-
         $request = $this->requestURL . "/equals/".$otherId;
         $response = $this->execute_rest_request_GET($request);
         $isOther = $this->extractValueFromJsonResponse($response);
@@ -191,21 +224,17 @@ class WebElement extends WebDriverBase {
 
     }
 
-
      /**
      * Determine an element's location on the page. The point (0, 0) refers to the upper-left corner of the page.
      * The element's coordinates are returned as a JSON object with x and y properties.
      * @return x:number, y:number The X and Y coordinates for the element on the page.
      */
     public function getLocation() {
-
         $request = $this->requestURL . "/location";
         $response = $this->execute_rest_request_GET($request);
         $location = $this->extractValueFromJsonResponse($response);
         return $location;
-
     }
-
 
      /**
      * Determine an element's location on the screen once it has been scrolled into view.
@@ -213,15 +242,11 @@ class WebElement extends WebDriverBase {
      * @return x:number, y:number The X and Y coordinates for the element.
      */
     public function getLocationInView() {
-
         $request = $this->requestURL . "/location_in_view";
         $response = $this->execute_rest_request_GET($request);
         $location = $this->extractValueFromJsonResponse($response);
         return $location;
-
     }
-
-
 }
 
 ?>

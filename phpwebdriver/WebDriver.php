@@ -434,7 +434,7 @@ class WebDriver extends WebDriverBase {
 	/**
 	* Waits until new window is opened
 	* @param bool $switch (wheter to switch to the new window or not)
-	* @return Webdriver - provides fluent interfase
+	* @return Webdriver - provides fluent interface
 	*/
 	public function waitForNewWindow($switch = true) {
 		$windows = $this->getWindowHandles();
