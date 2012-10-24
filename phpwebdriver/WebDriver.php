@@ -415,11 +415,13 @@ class WebDriver extends WebDriverBase {
      * Waits until the requested element is present on the page
      * @param string $locatorStrategy
      * @param string $value
+     * @param int $limit (time limit for new element)
      * @return WebElement found element
      * @author Tomas Jancik <t.jancik@gmail.com>
      */
-    public function waitForElement($locatorStrategy, $value) {
+    public function waitForElement($locatorStrategy, $value, $limit = 30) {
 		$element = null;
+        $start = time();
 
 		do {
 			try {
@@ -427,26 +429,48 @@ class WebDriver extends WebDriverBase {
 			} catch (NoSuchElementException $e) {
 				//nothing to do, we'll try later (in next loop);
 			}
-		} while(!is_a($element, 'WebElement') && !usleep(10000));
+            if(time() - $start <= 30) {
+                $inLimit = true;
+            } else {
+                $inLimit = false;
+            }
+		} while(!is_a($element, 'WebElement') && !usleep(10000) && $inLimit);
+
+        if(!$inLimit) {
+            Throw new RuntimeException(__METHOD__ . ': Element didnt appear in given time limit');
+        }
+
 		return $element;
 	}
 
 	/**
 	* Waits until new window is opened
 	* @param bool $switch (wheter to switch to the new window or not)
+    * @param int $limit (time limit for new window)
 	* @return Webdriver - provides fluent interface
 	*/
-	public function waitForNewWindow($switch = true) {
+	public function waitForNewWindow($switch = true, $limit = 30) {
 		$windows = $this->getWindowHandles();
 		$windowsCount = count($windows); unset($windows);
+        $start = time();
 
 		do {
 			$currentWindows = $this->getWindowHandles();
 			$currentWindowsCount = count($currentWindows);
-		} while($windowsCount == $currentWindowsCount && !usleep(10000));
+
+            if(time() - $start <= 30) {
+                $inLimit = true;
+            } else {
+                $inLimit = false;
+            }
+		} while($windowsCount == $currentWindowsCount && !usleep(10000) && $inLimit);
+
+        if(!$inLimit) {
+            Throw new RuntimeException(__METHOD__ . ': No new window opened in given limit');
+        }
 
 		if($switch) {
-			$this->selectWindow($currentWindows[$currentWindowsCount - 1]);
+			$this->selectWindow(end($currentWindows));
 		}
 
 		return $this;
